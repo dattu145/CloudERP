@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard, DollarSign, Users, Package, Truck,
   BarChart3, Brain, ChevronLeft, ChevronRight, Bell,
@@ -44,6 +44,13 @@ const navGroups = [
 
 export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout, user } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <motion.aside
@@ -127,7 +134,12 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
             )}
           </AnimatePresence>
         </button>
-        <button className="nav-item" style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent-rose)', marginTop: 4 }}>
+        <button
+          onClick={handleLogout}
+          className="nav-item"
+          style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent-rose)', marginTop: 4 }}
+          title={collapsed ? 'Logout' : ''}
+        >
           <LogOut className="nav-icon" />
           <AnimatePresence>
             {!collapsed && (

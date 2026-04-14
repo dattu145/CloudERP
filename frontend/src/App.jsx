@@ -1,47 +1,74 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
-import Dashboard from './pages/Dashboard';
-import Finance from './pages/finance/Finance';
-import Accounts from './pages/finance/Accounts';
-import Payroll from './pages/finance/Payroll';
-import Employees from './pages/hr/Employees';
-import Profiles from './pages/hr/Profiles';
-import Inventory from './pages/inventory/Inventory';
+
+// ── Auth Pages ────────────────────────────────────────────────────
+import Login  from './pages/auth/Login';
+import Signup from './pages/auth/Signup';
+
+// ── App Pages ─────────────────────────────────────────────────────
+import Dashboard  from './pages/Dashboard';
+import Finance    from './pages/finance/Finance';
+import Accounts   from './pages/finance/Accounts';
+import Payroll    from './pages/finance/Payroll';
+import Employees  from './pages/hr/Employees';
+import Profiles   from './pages/hr/Profiles';
+import Inventory  from './pages/inventory/Inventory';
 import SupplyChain from './pages/supply/SupplyChain';
-import Orders from './pages/supply/Orders';
-import Reports from './pages/reports/Reports';
+import Orders     from './pages/supply/Orders';
+import Reports    from './pages/reports/Reports';
 import AIInsights from './pages/AIInsights';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          {/* Dashboard */}
-          <Route index element={<Dashboard />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
 
-          {/* Finance */}
-          <Route path="finance"          element={<Finance />} />
-          <Route path="finance/accounts" element={<Accounts />} />
-          <Route path="finance/payroll"  element={<Payroll />} />
+          {/* ── Public Auth Routes ─────────────────────────────── */}
+          <Route path="/login"  element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-          {/* HR */}
-          <Route path="hr"          element={<Employees />} />
-          <Route path="hr/profiles" element={<Profiles />} />
+          {/* ── Protected App Routes ──────────────────────────── */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            {/* Dashboard */}
+            <Route index element={<Dashboard />} />
 
-          {/* Inventory */}
-          <Route path="inventory" element={<Inventory />} />
+            {/* Finance */}
+            <Route path="finance"          element={<Finance />} />
+            <Route path="finance/accounts" element={<Accounts />} />
+            <Route path="finance/payroll"  element={<Payroll />} />
 
-          {/* Supply Chain */}
-          <Route path="supply"        element={<SupplyChain />} />
-          <Route path="supply/orders" element={<Orders />} />
+            {/* HR */}
+            <Route path="hr"          element={<Employees />} />
+            <Route path="hr/profiles" element={<Profiles />} />
 
-          {/* Reports & AI */}
-          <Route path="reports" element={<Reports />} />
-          <Route path="ai"      element={<AIInsights />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+            {/* Inventory */}
+            <Route path="inventory" element={<Inventory />} />
+
+            {/* Supply Chain */}
+            <Route path="supply"        element={<SupplyChain />} />
+            <Route path="supply/orders" element={<Orders />} />
+
+            {/* Reports & AI */}
+            <Route path="reports" element={<Reports />} />
+            <Route path="ai"      element={<AIInsights />} />
+          </Route>
+
+          {/* ── Catch-all → redirect to dashboard ─────────────── */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

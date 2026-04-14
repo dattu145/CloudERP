@@ -1,36 +1,71 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import connectDB from './config/db.js';
 
+// ── Route Imports ─────────────────────────────────────────────────
+import authRoutes from './routes/authRoutes.js';
+import testRoutes from './routes/testRoutes.js';
+
+// ── Load Environment Variables ────────────────────────────────────
 dotenv.config();
 
+// ── Connect to MongoDB Atlas ──────────────────────────────────────
+connectDB();
+
+// ── Initialize Express App ────────────────────────────────────────
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
-app.use(express.json());
+// ── Global Middleware ─────────────────────────────────────────────
+app.use(cors({
+  origin: [
+    'http://localhost:3000', // Vite frontend
+    'http://localhost:5173', // Alternate Vite port
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
-// Database connection
-const connectDB = async () => {
-  try {
-    const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/clouderp';
-    await mongoose.connect(mongoUri);
-    console.log('MongoDB connected successfully');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    process.exit(1);
-  }
-};
+app.use(express.json());           // Parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
-// API Routes
+// ── Routes ────────────────────────────────────────────────────────
+app.use('/api/auth', authRoutes);  // POST /api/auth/register, POST /api/auth/login, GET /api/auth/me
+app.use('/api/test', testRoutes);  // GET /api/test (protected)
+
+// ── Health Check ──────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'CloudERP API is running' });
+  res.status(200).json({
+    success: true,
+    message: '✅ CloudERP API is running',
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString(),
+  });
 });
 
-// Start Server
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+// ── 404 Handler ───────────────────────────────────────────────────
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Route not found: ${req.method} ${req.originalUrl}`,
   });
+});
+
+// ── Global Error Handler ──────────────────────────────────────────
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err.stack);
+  res.status(err.statusCode || 500).json({
+    success: false,
+    message: err.message || 'Internal Server Error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+  });
+});
+
+// ── Start Server ──────────────────────────────────────────────────
+app.listen(PORT, () => {
+  console.log(`🚀 CloudERP server running on port ${PORT}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📡 API Base: http://localhost:${PORT}/api`);
 });

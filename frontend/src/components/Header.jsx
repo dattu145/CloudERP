@@ -1,13 +1,26 @@
 import { useState, useEffect } from 'react';
 import { Bell, Search, Settings, Sun, Moon, Menu, LogOut, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Header({ collapsed, setMobileOpen }) {
   const [notifications] = useState(3);
   const [showSettings, setShowSettings] = useState(false);
-  const [showNotifs, setShowNotifs] = useState(false);
-  
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+  const [showNotifs, setShowNotifs]     = useState(false);
+  const [theme, setTheme]               = useState(() => localStorage.getItem('theme') || 'light');
+
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  // Derive display name and avatar initial from auth context
+  const displayName = user?.name || 'User';
+  const avatarChar  = displayName.charAt(0).toUpperCase();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
 
   useEffect(() => {
     if (theme === 'light') {
@@ -113,7 +126,7 @@ export default function Header({ collapsed, setMobileOpen }) {
                 <button className="btn btn-secondary" style={{ width: '100%', justifyContent: 'flex-start', padding: '10px 14px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', marginBottom: 8 }}>
                   <User size={15} style={{ marginRight: 8 }} /> <span style={{ fontSize: 13, fontWeight: 600 }}>My Account</span>
                 </button>
-                <button className="btn btn-secondary" style={{ width: '100%', justifyContent: 'flex-start', padding: '10px 14px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--accent-rose)' }}>
+                <button className="btn btn-secondary" style={{ width: '100%', justifyContent: 'flex-start', padding: '10px 14px', background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--accent-rose)' }} onClick={handleLogout}>
                   <LogOut size={15} style={{ marginRight: 8 }} /> <span style={{ fontSize: 13, fontWeight: 600 }}>Log Out</span>
                 </button>
 
@@ -125,10 +138,10 @@ export default function Header({ collapsed, setMobileOpen }) {
         <div style={{ width: 1, height: 24, background: 'var(--border)', margin: '0 4px' }} className="hide-mobile" />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} className="hide-mobile">
-          <div className="user-avatar" id="header-user-avatar">N</div>
+          <div className="user-avatar" id="header-user-avatar">{avatarChar}</div>
           <div style={{ lineHeight: 1.3 }}>
-            <div style={{ fontSize: 13, fontWeight: 600 }}>Neelima</div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Administrator</div>
+            <div style={{ fontSize: 13, fontWeight: 600 }}>{displayName}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{user?.role || 'Employee'}</div>
           </div>
         </div>
       </div>
