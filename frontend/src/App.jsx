@@ -1,62 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
+import Dashboard from './pages/Dashboard';
+import Finance from './pages/finance/Finance';
+import Accounts from './pages/finance/Accounts';
+import Payroll from './pages/finance/Payroll';
+import Employees from './pages/hr/Employees';
+import Profiles from './pages/hr/Profiles';
+import Inventory from './pages/inventory/Inventory';
+import SupplyChain from './pages/supply/SupplyChain';
+import Orders from './pages/supply/Orders';
+import Reports from './pages/reports/Reports';
+import AIInsights from './pages/AIInsights';
 
 function App() {
-  const [healthStatus, setHealthStatus] = useState('Checking...');
-
-  useEffect(() => {
-    fetch('http://localhost:5000/api/health')
-      .then(res => res.json())
-      .then(data => setHealthStatus(data.status))
-      .catch(err => setHealthStatus('Offline'));
-  }, []);
-
   return (
-    <div className="app-container">
-      <header className="header">
-        <div className="logo">CloudERP ✨</div>
-        <div>
-          <button className="btn-primary">Sign In</button>
-        </div>
-      </header>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          {/* Dashboard */}
+          <Route index element={<Dashboard />} />
 
-      <main className="main-content">
-        <section className="hero">
-          <h1 className="hero-title">One Platform to Run Your Entire Business</h1>
-          <p className="hero-subtitle">Finance, HR, Inventory, and AI Predictions combined into one seamlessly integrated experience.</p>
-          <button className="btn-primary" style={{ padding: '1rem 2.5rem', fontSize: '1.2rem' }}>Get Started</button>
-          
-          <div style={{ marginTop: '2rem', fontSize: '0.9rem', color: healthStatus === 'ok' ? 'var(--success)' : 'var(--danger)' }}>
-            API Status: {healthStatus.toUpperCase()}
-          </div>
-        </section>
+          {/* Finance */}
+          <Route path="finance"          element={<Finance />} />
+          <Route path="finance/accounts" element={<Accounts />} />
+          <Route path="finance/payroll"  element={<Payroll />} />
 
-        <section className="grid">
-          <div className="card">
-            <div className="card-icon">💰</div>
-            <h3 className="card-title">Finance & Billing</h3>
-            <p className="card-desc">Track income, manage invoices, and keep your accounting perfectly balanced in real-time.</p>
-          </div>
-          
-          <div className="card">
-            <div className="card-icon">👨‍💼</div>
-            <h3 className="card-title">Human Resources</h3>
-            <p className="card-desc">Manage employee profiles, track attendance, run payroll securely, and oversee your talent.</p>
-          </div>
-          
-          <div className="card">
-            <div className="card-icon">📦</div>
-            <h3 className="card-title">Inventory Control</h3>
-            <p className="card-desc">Real-time stock tracking, automated reordering flows, and supply chain insights.</p>
-          </div>
-          
-          <div className="card">
-            <div className="card-icon">🤖</div>
-            <h3 className="card-title">AI Predictions</h3>
-            <p className="card-desc">Foresee product demand, analyze seasonal patterns, and make data-driven autonomous decisions.</p>
-          </div>
-        </section>
-      </main>
-    </div>
+          {/* HR */}
+          <Route path="hr"          element={<Employees />} />
+          <Route path="hr/profiles" element={<Profiles />} />
+
+          {/* Inventory */}
+          <Route path="inventory" element={<Inventory />} />
+
+          {/* Supply Chain */}
+          <Route path="supply"        element={<SupplyChain />} />
+          <Route path="supply/orders" element={<Orders />} />
+
+          {/* Reports & AI */}
+          <Route path="reports" element={<Reports />} />
+          <Route path="ai"      element={<AIInsights />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
