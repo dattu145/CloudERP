@@ -6,6 +6,11 @@ import connectDB from './config/db.js';
 // ── Route Imports ─────────────────────────────────────────────────
 import authRoutes from './routes/authRoutes.js';
 import testRoutes from './routes/testRoutes.js';
+import inventoryRoutes from './routes/inventoryRoutes.js';
+import supplyRoutes from './routes/supplyRoutes.js';
+import financeRoutes from './routes/financeRoutes.js';
+import hrRoutes from './routes/hrRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
 
 // ── Load Environment Variables ────────────────────────────────────
 dotenv.config();
@@ -32,8 +37,13 @@ app.use(express.json());           // Parse JSON bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 // ── Routes ────────────────────────────────────────────────────────
-app.use('/api/auth', authRoutes);  // POST /api/auth/register, POST /api/auth/login, GET /api/auth/me
-app.use('/api/test', testRoutes);  // GET /api/test (protected)
+app.use('/api/auth', authRoutes);  
+app.use('/api/test', testRoutes);  
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/supply', supplyRoutes);
+app.use('/api/finance', financeRoutes);
+app.use('/api/hr', hrRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // ── Health Check ──────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
