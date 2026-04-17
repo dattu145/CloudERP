@@ -9,16 +9,47 @@ import {
 /* ─── Page Background ───────────────────────────────────────────── */
 function Background() {
   return (
-    <div className="fixed inset-0 -z-10 bg-gradient-to-br from-gray-50 via-indigo-50/70 to-purple-50/80">
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: -1,
+        background: 'linear-gradient(135deg, #f0f4ff 0%, #e8edff 50%, #f3e8ff 100%)',
+      }}
+    >
       <div
-        className="absolute inset-0 opacity-30"
         style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: 0.25,
           backgroundImage: 'radial-gradient(circle, #a5b4fc 1px, transparent 1px)',
           backgroundSize: '30px 30px',
         }}
       />
-      <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-indigo-100/70 blur-3xl" />
-      <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-purple-100/70 blur-3xl" />
+      <div
+        style={{
+          position: 'absolute',
+          top: -128,
+          right: -128,
+          width: 384,
+          height: 384,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(165,180,252,0.5), transparent)',
+          filter: 'blur(60px)',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          bottom: -128,
+          left: -128,
+          width: 384,
+          height: 384,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(196,181,253,0.5), transparent)',
+          filter: 'blur(60px)',
+        }}
+      />
     </div>
   );
 }
@@ -27,19 +58,50 @@ function Background() {
 function FormInput({ id, type, label, value, onChange, Icon, error, rightSlot }) {
   const [focused, setFocused] = useState(false);
 
+  const borderColor = error
+    ? '#f87171'
+    : focused
+    ? '#6366f1'
+    : '#d1d5db';
+
+  const bgColor = error ? '#fff5f5' : focused ? '#fff' : '#f9fafb';
+  const ringStyle = error
+    ? { boxShadow: '0 0 0 3px rgba(248,113,113,0.15)' }
+    : focused
+    ? { boxShadow: '0 0 0 3px rgba(99,102,241,0.12)' }
+    : {};
+
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-semibold text-gray-700">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <label
+        htmlFor={id}
+        style={{
+          fontSize: 13,
+          fontWeight: 600,
+          color: '#374151',
+          fontFamily: 'Inter, sans-serif',
+        }}
+      >
         {label}
       </label>
-      <div className="relative">
+      <div style={{ position: 'relative' }}>
+        {/* Left icon */}
         <div
-          className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-200 ${
-            focused ? 'text-indigo-500' : 'text-gray-400'
-          }`}
+          style={{
+            position: 'absolute',
+            left: 14,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            pointerEvents: 'none',
+            color: focused ? '#6366f1' : '#9ca3af',
+            display: 'flex',
+            alignItems: 'center',
+            transition: 'color 0.2s',
+          }}
         >
-          <Icon size={17} />
+          <Icon size={16} />
         </div>
+
         <input
           id={id}
           type={type}
@@ -48,29 +110,61 @@ function FormInput({ id, type, label, value, onChange, Icon, error, rightSlot })
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           placeholder={`Enter your ${label.toLowerCase()}`}
-          style={{ paddingRight: rightSlot ? '3rem' : '1rem' }}
-          className={`w-full pl-11 py-3 text-sm rounded-lg outline-none transition-all duration-200
-            bg-gray-50 text-gray-900 placeholder-gray-400 border
-            ${error
-              ? 'border-red-300 bg-red-50 focus:ring-2 focus:ring-red-200 focus:border-red-400'
-              : focused
-              ? 'border-indigo-400 bg-white ring-2 ring-indigo-100'
-              : 'border-gray-300 hover:border-gray-400'
-            }`}
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            paddingLeft: 42,
+            paddingRight: rightSlot ? 44 : 14,
+            paddingTop: 11,
+            paddingBottom: 11,
+            fontSize: 14,
+            borderRadius: 10,
+            border: `1.5px solid ${borderColor}`,
+            background: bgColor,
+            color: '#111827',
+            outline: 'none',
+            transition: 'border-color 0.2s, box-shadow 0.2s',
+            fontFamily: 'Inter, sans-serif',
+            ...ringStyle,
+            appearance: 'none',
+            WebkitAppearance: 'none',
+          }}
         />
+
         {rightSlot && (
-          <div className="absolute right-3.5 top-1/2 -translate-y-1/2">{rightSlot}</div>
+          <div
+            style={{
+              position: 'absolute',
+              right: 13,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            {rightSlot}
+          </div>
         )}
       </div>
+
       <AnimatePresence>
         {error && (
           <motion.p
-            initial={{ opacity: 0, y: -4, height: 0 }}
-            animate={{ opacity: 1, y: 0, height: 'auto' }}
-            exit={{ opacity: 0, y: -4, height: 0 }}
-            className="flex items-center gap-1.5 text-xs font-medium text-red-500"
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5,
+              fontSize: 12,
+              fontWeight: 500,
+              color: '#ef4444',
+              margin: 0,
+              fontFamily: 'Inter, sans-serif',
+            }}
           >
-            <AlertCircle size={12} className="flex-shrink-0" />
+            <AlertCircle size={12} style={{ flexShrink: 0 }} />
             {error}
           </motion.p>
         )}
@@ -89,37 +183,50 @@ function PasswordStrength({ password }) {
     { label: 'Special char', pass: /[^A-Za-z0-9]/.test(password) },
   ];
   const score     = checks.filter((c) => c.pass).length;
-  const barColors = ['', 'bg-red-400', 'bg-amber-400', 'bg-yellow-400', 'bg-emerald-500'];
+  const barColors = ['#e5e7eb', '#f87171', '#fbbf24', '#facc15', '#10b981'];
   const labels    = ['', 'Weak', 'Fair', 'Good', 'Strong'];
-  const textColor = ['', 'text-red-500', 'text-amber-500', 'text-yellow-600', 'text-emerald-600'];
+  const textColors = ['#9ca3af', '#ef4444', '#f59e0b', '#ca8a04', '#059669'];
 
   return (
     <motion.div
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: 'auto' }}
-      exit={{ opacity: 0, height: 0 }}
-      className="flex flex-col gap-2 pt-1"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 4 }}
     >
-      <div className="flex gap-1.5">
+      {/* Bars */}
+      <div style={{ display: 'flex', gap: 6 }}>
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
-            className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-              i <= score ? barColors[score] : 'bg-gray-200'
-            }`}
+            style={{
+              flex: 1,
+              height: 5,
+              borderRadius: 9999,
+              background: i <= score ? barColors[score] : '#e5e7eb',
+              transition: 'background 0.3s',
+            }}
           />
         ))}
       </div>
-      <div className="flex items-center justify-between">
-        <span className={`text-xs font-semibold ${textColor[score] || 'text-gray-400'}`}>
-          {labels[score] || 'Enter a password'}
+      {/* Label + check icons */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span
+          style={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: textColors[score] || '#9ca3af',
+            fontFamily: 'Inter, sans-serif',
+          }}
+        >
+          {labels[score] || 'Enter password'}
         </span>
-        <div className="flex items-center gap-1.5">
+        <div style={{ display: 'flex', gap: 5 }}>
           {checks.map((c) => (
             <span
               key={c.label}
               title={c.label}
-              className={`transition-colors duration-200 ${c.pass ? 'text-emerald-500' : 'text-gray-300'}`}
+              style={{ color: c.pass ? '#10b981' : '#d1d5db', transition: 'color 0.2s' }}
             >
               <CheckCircle2 size={12} />
             </span>
@@ -133,28 +240,56 @@ function PasswordStrength({ password }) {
 /* ─── Success Screen ────────────────────────────────────────────── */
 function SuccessScreen() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <Background />
       <motion.div
-        className="flex flex-col items-center gap-5 text-center"
+        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, textAlign: 'center' }}
         initial={{ opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ type: 'spring', damping: 18 }}
       >
-        <div className="flex items-center justify-center w-20 h-20 rounded-3xl bg-emerald-500 shadow-lg shadow-emerald-200">
+        <div
+          style={{
+            width: 80,
+            height: 80,
+            borderRadius: 24,
+            background: '#10b981',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 8px 24px rgba(16,185,129,0.35)',
+          }}
+        >
           <CheckCircle2 size={40} color="white" strokeWidth={2} />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-gray-800" style={{ fontFamily: 'Poppins, sans-serif' }}>
+          <h2
+            style={{
+              fontSize: 22,
+              fontWeight: 700,
+              color: '#111827',
+              fontFamily: 'Poppins, sans-serif',
+              margin: 0,
+            }}
+          >
             Account Created!
           </h2>
-          <p className="text-gray-400 text-sm mt-1.5">Redirecting you to login…</p>
+          <p style={{ color: '#9ca3af', fontSize: 14, marginTop: 6, fontFamily: 'Inter, sans-serif' }}>
+            Redirecting you to login…
+          </p>
         </div>
-        <div className="flex gap-1.5">
+        <div style={{ display: 'flex', gap: 7 }}>
           {[0, 1, 2].map((i) => (
             <motion.div
               key={i}
-              className="w-2 h-2 rounded-full bg-emerald-500"
+              style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981' }}
               animate={{ opacity: [0.3, 1, 0.3] }}
               transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }}
             />
@@ -214,7 +349,10 @@ export default function Signup() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) { setApiError(data.message || 'Registration failed. Please try again.'); return; }
+      if (!res.ok) {
+        setApiError(data.message || 'Registration failed. Please try again.');
+        return;
+      }
       setSuccess(true);
       setTimeout(() => navigate('/login'), 2200);
     } catch {
@@ -227,74 +365,155 @@ export default function Signup() {
   if (success) return <SuccessScreen />;
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-10">
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '32px 16px',
+        boxSizing: 'border-box',
+      }}
+    >
       <Background />
 
       <motion.div
-        className="w-full max-w-md md:max-w-lg"
+        style={{ width: '100%', maxWidth: 480 }}
         initial={{ opacity: 0, y: 28 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       >
-        {/* ─────────────── Card ─────────────────────────────────── */}
-        <div className="w-full bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-
+        {/* ── Card ─────────────────────────────────────────────── */}
+        <div
+          style={{
+            width: '100%',
+            background: '#fff',
+            borderRadius: 20,
+            boxShadow: '0 8px 40px rgba(99,102,241,0.12), 0 2px 8px rgba(0,0,0,0.06)',
+            border: '1px solid rgba(99,102,241,0.1)',
+            overflow: 'hidden',
+          }}
+        >
           {/* Accent bar */}
-          <div className="h-1 w-full bg-gradient-to-r from-emerald-400 via-indigo-500 to-violet-500" />
+          <div
+            style={{
+              height: 4,
+              width: '100%',
+              background: 'linear-gradient(90deg, #34d399, #6366f1, #8b5cf6)',
+            }}
+          />
 
           {/* Card body */}
-          <div className="px-8 pt-9 pb-7 md:px-10 md:pt-10">
+          <div style={{ padding: '36px 36px 28px', boxSizing: 'border-box' }}>
 
-            {/* ── Logo block → CENTERED ─────────────────────────── */}
-            <div className="flex flex-col items-center text-center mb-8">
+            {/* ── Logo block — centered ──────────────────────────── */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+                marginBottom: 28,
+              }}
+            >
               <div
-                className="flex items-center justify-center w-14 h-14 rounded-2xl mb-4 shadow-md"
-                style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 16,
+                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 14,
+                  boxShadow: '0 4px 14px rgba(99,102,241,0.35)',
+                }}
               >
-                <Brain size={28} color="white" strokeWidth={1.8} />
+                <Brain size={26} color="white" strokeWidth={1.8} />
               </div>
               <h1
-                className="text-2xl font-extrabold text-gray-900 tracking-tight"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
+                style={{
+                  fontSize: 22,
+                  fontWeight: 800,
+                  color: '#0f172a',
+                  fontFamily: 'Poppins, sans-serif',
+                  margin: 0,
+                  letterSpacing: '-0.3px',
+                }}
               >
-                Cloud<span className="text-indigo-600">ERP</span>
+                Cloud<span style={{ color: '#6366f1' }}>ERP</span>
               </h1>
-              <p className="text-sm text-gray-400 mt-1 tracking-wide">
+              <p
+                style={{
+                  fontSize: 12,
+                  color: '#9ca3af',
+                  marginTop: 4,
+                  fontFamily: 'Inter, sans-serif',
+                  letterSpacing: '0.5px',
+                }}
+              >
                 Smart Business Management Platform
               </p>
             </div>
 
-            {/* ── Section heading → LEFT ALIGNED ───────────────── */}
-            <div className="mb-7">
+            {/* ── Section heading — left aligned ────────────────── */}
+            <div style={{ marginBottom: 20 }}>
               <h2
-                className="text-xl font-bold text-gray-800"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
+                style={{
+                  fontSize: 20,
+                  fontWeight: 700,
+                  color: '#1e293b',
+                  fontFamily: 'Poppins, sans-serif',
+                  margin: 0,
+                }}
               >
                 Create your account ✨
               </h2>
-              <p className="text-sm text-gray-400 mt-1">
+              <p
+                style={{
+                  fontSize: 13,
+                  color: '#94a3b8',
+                  marginTop: 4,
+                  fontFamily: 'Inter, sans-serif',
+                }}
+              >
                 Join CloudERP and streamline your business
               </p>
             </div>
 
-            {/* ── API Error Banner ──────────────────────────────── */}
+            {/* ── API Error Banner ───────────────────────────────── */}
             <AnimatePresence>
               {apiError && (
                 <motion.div
-                  initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                  animate={{ opacity: 1, height: 'auto', marginBottom: 24 }}
-                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                  className="flex items-start gap-3 px-4 py-3 rounded-xl text-sm text-red-600 bg-red-50 border border-red-200"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  style={{ overflow: 'hidden', marginBottom: 16 }}
                 >
-                  <AlertCircle size={15} className="flex-shrink-0 mt-0.5" />
-                  {apiError}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 10,
+                      padding: '10px 14px',
+                      borderRadius: 10,
+                      background: '#fff5f5',
+                      border: '1px solid #fecaca',
+                      fontSize: 13,
+                      color: '#dc2626',
+                      fontFamily: 'Inter, sans-serif',
+                    }}
+                  >
+                    <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
+                    {apiError}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* ── Form → full width, left-aligned ─────────────── */}
+            {/* ── Form ──────────────────────────────────────────── */}
             <form onSubmit={handleSubmit} noValidate>
-              <div className="flex flex-col gap-5">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
 
                 {/* Full name */}
                 <FormInput
@@ -319,7 +538,7 @@ export default function Signup() {
                 />
 
                 {/* Password + strength */}
-                <div className="flex flex-col gap-1.5">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   <FormInput
                     id="signup-password"
                     type={showPass ? 'text' : 'password'}
@@ -333,7 +552,15 @@ export default function Signup() {
                         type="button"
                         tabIndex={-1}
                         onClick={() => setShowPass(!showPass)}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          color: '#9ca3af',
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: 0,
+                        }}
                       >
                         {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
@@ -358,7 +585,15 @@ export default function Signup() {
                       type="button"
                       tabIndex={-1}
                       onClick={() => setShowConf(!showConf)}
-                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#9ca3af',
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: 0,
+                      }}
                     >
                       {showConf ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
@@ -366,11 +601,28 @@ export default function Signup() {
                 />
 
                 {/* Terms */}
-                <p className="text-xs text-gray-400">
+                <p
+                  style={{
+                    fontSize: 12,
+                    color: '#94a3b8',
+                    fontFamily: 'Inter, sans-serif',
+                    margin: 0,
+                    lineHeight: 1.5,
+                  }}
+                >
                   By creating an account you agree to our{' '}
-                  <span className="text-indigo-500 hover:underline cursor-pointer">Terms of Service</span>{' '}
+                  <span
+                    style={{ color: '#6366f1', cursor: 'pointer', textDecoration: 'underline' }}
+                  >
+                    Terms of Service
+                  </span>{' '}
                   and{' '}
-                  <span className="text-indigo-500 hover:underline cursor-pointer">Privacy Policy</span>.
+                  <span
+                    style={{ color: '#6366f1', cursor: 'pointer', textDecoration: 'underline' }}
+                  >
+                    Privacy Policy
+                  </span>
+                  .
                 </p>
 
                 {/* Submit */}
@@ -380,29 +632,65 @@ export default function Signup() {
                   disabled={loading}
                   whileHover={{ scale: loading ? 1 : 1.02 }}
                   whileTap={{ scale: loading ? 1 : 0.98 }}
-                  className="w-full py-3 rounded-lg font-semibold text-sm text-white flex items-center justify-center gap-2.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                   style={{
+                    width: '100%',
+                    padding: '13px 0',
+                    borderRadius: 10,
+                    border: 'none',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    background: loading
+                      ? 'linear-gradient(135deg, #a5b4fc, #c4b5fd)'
+                      : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                    color: '#fff',
+                    fontSize: 14,
+                    fontWeight: 600,
                     fontFamily: 'Poppins, sans-serif',
-                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
                     boxShadow: loading ? 'none' : '0 4px 16px rgba(99,102,241,0.4)',
+                    transition: 'box-shadow 0.2s, background 0.2s',
+                    opacity: loading ? 0.8 : 1,
                   }}
                 >
                   {loading
-                    ? <><Loader2 size={16} className="animate-spin" /> Creating account…</>
+                    ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Creating account…</>
                     : <><span>Create my account</span><ArrowRight size={16} /></>
                   }
                 </motion.button>
+
               </div>
             </form>
           </div>
 
-          {/* ── Footer strip → CENTERED ───────────────────────── */}
-          <div className="px-8 md:px-10 py-4 bg-gray-50/80 border-t border-gray-100 text-center">
-            <p className="text-sm text-gray-500">
+          {/* ── Footer strip ─────────────────────────────────────── */}
+          <div
+            style={{
+              padding: '14px 36px',
+              background: '#f8fafc',
+              borderTop: '1px solid #f1f5f9',
+              textAlign: 'center',
+            }}
+          >
+            <p
+              style={{
+                fontSize: 13,
+                color: '#64748b',
+                fontFamily: 'Inter, sans-serif',
+                margin: 0,
+              }}
+            >
               Already have an account?{' '}
               <Link
                 to="/login"
-                className="font-semibold text-indigo-600 hover:text-indigo-800 hover:underline underline-offset-2 transition-colors"
+                style={{
+                  color: '#6366f1',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                }}
+                onMouseEnter={(e) => (e.target.style.textDecoration = 'underline')}
+                onMouseLeave={(e) => (e.target.style.textDecoration = 'none')}
               >
                 Sign in
               </Link>
@@ -411,10 +699,23 @@ export default function Signup() {
         </div>
 
         {/* Page footer */}
-        <p className="text-center text-xs text-gray-400 mt-5">
+        <p
+          style={{
+            textAlign: 'center',
+            fontSize: 11,
+            color: '#94a3b8',
+            marginTop: 18,
+            fontFamily: 'Inter, sans-serif',
+          }}
+        >
           © 2026 CloudERP · Enterprise Resource Planning · All rights reserved
         </p>
       </motion.div>
+
+      {/* Spinner keyframe */}
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 }

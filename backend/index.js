@@ -1,6 +1,9 @@
+import dotenv from 'dotenv';
+// ── Load Environment Variables FIRST (before anything that reads process.env) ──
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 
 // ── Route Imports ─────────────────────────────────────────────────
@@ -11,9 +14,6 @@ import supplyRoutes from './routes/supplyRoutes.js';
 import financeRoutes from './routes/financeRoutes.js';
 import hrRoutes from './routes/hrRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
-
-// ── Load Environment Variables ────────────────────────────────────
-dotenv.config();
 
 // ── Connect to MongoDB Atlas ──────────────────────────────────────
 connectDB();

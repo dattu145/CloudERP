@@ -123,7 +123,7 @@ export default function AIInsights() {
         </motion.div>
 
         {/* Cashflow Forecast */}
-        <motion.div className="glass-card p-6"
+        <motion.div className="glass-card p-6 mt-6"
           initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.35 }}>
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp size={16} color="var(--accent-emerald)" />

@@ -23,7 +23,7 @@ import AIInsights from './pages/AIInsights';
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
 
           {/* ── Public Auth Routes ─────────────────────────────── */}
